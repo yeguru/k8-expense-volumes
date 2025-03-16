@@ -1,5 +1,6 @@
-kind: ConfigMap
+
 apiVersion: v1
+kind: ConfigMap
 metadata:
   name: nginx
   namespace: expense
@@ -57,18 +58,17 @@ data:
 
             error_page 500 502 503 504 /50x.html;
                 location = /50x.html {
-          }
-       }
+            }
+        }
 
     }
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
   namespace: expense
-# These are deployment resource labels.  
+  # labels of deployment resource
   labels:
     app: frontend
     tier: web
@@ -89,21 +89,31 @@ spec:
     spec:
       volumes:
       - name: nginx
-          configMap:
+        configMap:
           name: nginx
           items:
             - key: nginx.conf
               path: nginx.conf
-      containers:      
+      containers:
       - name: nginx
         image: yeguru/frontend:1.2.0
+        resources:
+          # soft limit
+          requests:
+            memory: "68Mi"
+            cpu: "100m"
+          # hard limit
+          limits:
+            memory: "128Mi"
+            cpu: "150m"
         ports:
-          - containerPort: 8080
+        - containerPort: 8080
         volumeMounts:
         - name: nginx
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
-          readOnly: true  
+          readOnly: true
+
 ---
 kind: Service
 apiVersion: v1
@@ -112,11 +122,31 @@ metadata:
   namespace: expense
 spec:
   type: LoadBalancer
-  selector:     #labels are used as selectors
+  selector: # labels are used as selectors
     app: frontend
     tier: web
     project: expense
   ports:
   - protocol: TCP
-    port: 80  #service port
+    port: 80 # service port
     targetPort: 8080
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend
+  namespace: expense
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 5
