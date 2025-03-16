@@ -47,7 +47,7 @@ data:
             # Load configuration files for the default server block.
             include /etc/nginx/default.d/*.conf;
 
-    	    location /api/ {
+    	      location /api/ {
         	    proxy_pass http://backend:8080/;
               # proxy_pass http://localhost:8080/;
     	      }
@@ -59,9 +59,9 @@ data:
             error_page 500 502 503 504 /50x.html;
             location = /50x.html {
             }
-          }
+        }
 
-      }  
+    }  
 ---
 apiVersion: apps/v1
 kind: Deployment
