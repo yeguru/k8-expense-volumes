@@ -34,9 +34,9 @@ spec:
       containers:
       - name: nginx
         image: yeguru/backend:1.0.0
-      envFrom:
-      - configMapRef:
-        name: backend  
+        envFrom:
+        - configMapRef:
+            name: backend  
 ---
 kind: Service
 apiVersion: v1
