@@ -59,9 +59,9 @@ data:
             error_page 500 502 503 504 /50x.html;
             location = /50x.html {
             }
-        }
+          }
 
-    }  
+      }  
 ---
 apiVersion: apps/v1
 kind: Deployment
