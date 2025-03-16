@@ -100,11 +100,11 @@ spec:
           image: yeguru/frontend:1.2.0
           ports:
           - containerPort: 8080
-          volumeMounts:
-            - name: nginx
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
-              readOnly: true  
+      volumeMounts:
+        - name: nginx
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true  
 ---
 kind: Service
 apiVersion: v1
