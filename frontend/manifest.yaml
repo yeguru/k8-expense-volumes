@@ -87,20 +87,19 @@ spec:
         tier: web
         project: expense
     spec:
-      containers:
-       volumes:
-        - name: nginx
+      volumes:
+      - name: nginx
           configMap:
           name: nginx
           items:
             - key: nginx.conf
               path: nginx.conf
-              
-        - name: nginx
-          image: yeguru/frontend:1.2.0
-          ports:
+      containers:      
+      - name: nginx
+        image: yeguru/frontend:1.2.0
+        ports:
           - containerPort: 8080
-      volumeMounts:
+        volumeMounts:
         - name: nginx
           mountPath: /etc/nginx/nginx.conf
           subPath: nginx.conf
